@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
         // Click sull'area trasparente → chiudi
-        findViewById<FrameLayout>(R.id.flBackground).setOnClickListener { finish() }
+        findViewById<FrameLayout>(R.id.flBackground).setOnClickListener { finishAndRemoveTask() }
 
         // Posiziona la card vicino all'icona sorgente dopo il layout
         val llCard = findViewById<LinearLayout>(R.id.llCard)
@@ -59,6 +59,11 @@ class MainActivity : AppCompatActivity() {
 
         setupKeyboard()
         loadApps()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        finishAndRemoveTask()
     }
 
     private fun positionCard(card: LinearLayout) {
