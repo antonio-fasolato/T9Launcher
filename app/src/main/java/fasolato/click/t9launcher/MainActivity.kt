@@ -159,9 +159,12 @@ class MainActivity : AppCompatActivity() {
         }.start()
     }
 
+    private fun digitsToLetterGroups(digits: String): String =
+        digits.map { t9Map[it]?.uppercase() ?: it.toString() }.joinToString(" ")
+
     private fun updateSearch() {
         val digits = currentDigits.toString()
-        tvSearchDisplay.text = digits
+        tvSearchDisplay.text = digitsToLetterGroups(digits)
 
         val filtered = if (digits.isEmpty()) allApps
         else allApps.filter { matchesT9(it.name, digits) }
