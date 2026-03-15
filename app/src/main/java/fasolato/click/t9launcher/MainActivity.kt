@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         val screenHeight = dm.heightPixels
         val cardWidth = card.width
         val cardHeight = card.height
-        val margin = (8 * dm.density).toInt()
+        val margin = (60 * dm.density).toInt()
 
         val sourceBounds = intent.sourceBounds
         var left: Int
