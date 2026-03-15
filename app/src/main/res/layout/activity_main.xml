@@ -17,23 +17,6 @@
         android:paddingStart="12dp"
         android:paddingEnd="12dp">
 
-        <!-- Search display -->
-        <TextView
-            android:id="@+id/tvSearchDisplay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/search_background"
-            android:text=""
-            android:hint="@string/search_hint"
-            android:textColorHint="@color/hint_text"
-            android:textColor="@color/hint_text"
-            android:textSize="16sp"
-            android:fontFamily="monospace"
-            android:padding="12dp"
-            android:minHeight="52dp"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp" />
-
         <!-- App icons row -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvApps"
