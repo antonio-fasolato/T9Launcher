@@ -7,9 +7,9 @@
 
     <LinearLayout
         android:id="@+id/llCard"
-        android:layout_width="match_parent"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:clickable="true"
         android:orientation="vertical"
         android:background="@drawable/bg_launcher_card"
         android:paddingTop="16dp"

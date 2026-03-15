@@ -2,9 +2,12 @@ package fasolato.click.t9launcher
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -33,11 +36,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Finestra a tutto schermo con sfondo trasparente
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
-        // Click sull'area trasparente sopra il card → chiudi
+        // Click sull'area trasparente → chiudi
         findViewById<FrameLayout>(R.id.flBackground).setOnClickListener { finish() }
+
+        // Posiziona la card vicino all'icona sorgente dopo il layout
+        val llCard = findViewById<LinearLayout>(R.id.llCard)
+        llCard.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                llCard.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                positionCard(llCard)
+            }
+        })
 
         tvSearchDisplay = findViewById(R.id.tvSearchDisplay)
 
@@ -48,6 +59,39 @@ class MainActivity : AppCompatActivity() {
 
         setupKeyboard()
         loadApps()
+    }
+
+    private fun positionCard(card: LinearLayout) {
+        val dm = resources.displayMetrics
+        val screenWidth = dm.widthPixels
+        val screenHeight = dm.heightPixels
+        val cardWidth = card.width
+        val cardHeight = card.height
+        val margin = (8 * dm.density).toInt()
+
+        val sourceBounds = intent.sourceBounds
+        var left: Int
+        var top: Int
+
+        if (sourceBounds != null) {
+            left = sourceBounds.centerX() - cardWidth / 2
+            top = sourceBounds.bottom + margin
+            if (top + cardHeight > screenHeight - margin) {
+                top = sourceBounds.top - cardHeight - margin
+            }
+        } else {
+            left = (screenWidth - cardWidth) / 2
+            top = (screenHeight - cardHeight) / 2
+        }
+
+        left = left.coerceIn(margin, screenWidth - cardWidth - margin)
+        top = top.coerceIn(margin, screenHeight - cardHeight - margin)
+
+        val params = card.layoutParams as FrameLayout.LayoutParams
+        params.gravity = Gravity.TOP or Gravity.START
+        params.leftMargin = left
+        params.topMargin = top
+        card.layoutParams = params
     }
 
     private fun setupKeyboard() {
