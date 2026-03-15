@@ -238,7 +238,7 @@ class MainActivity : AppCompatActivity() {
                 compareByDescending<AppInfo> { launchTracker.getLaunchCount(it.packageName) }
                     .thenBy { it.name.lowercase() }
             )
-            appAdapter.updateApps(sorted)
+            appAdapter.updateApps(sorted, digits)
         }
     }
 
