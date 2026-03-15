@@ -3,7 +3,7 @@
     <string name="search_hint">Digita per cercare…</string>
     <string name="no_results">Nessuna app trovata</string>
     <string name="btn_backspace">⌫</string>
-    <string name="btn_clear">C</string>
+    <string name="btn_clear">C\n⌫</string>
     <string name="search_hint_settings">Cerca nelle impostazioni…</string>
     <string name="menu_app_info">Informazioni app</string>
     <string name="menu_uninstall">Disinstalla</string>

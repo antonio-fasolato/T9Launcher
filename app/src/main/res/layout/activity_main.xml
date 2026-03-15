@@ -33,8 +33,8 @@
             android:stretchColumns="*">
 
             <TableRow android:layout_marginBottom="4dp">
-                <Button android:id="@+id/btn1" style="@style/T9Key" android:layout_marginEnd="4dp" android:text="1\n⚙" />
-                <Button android:id="@+id/btn2" style="@style/T9Key" android:layout_marginStart="2dp" android:layout_marginEnd="2dp" android:text="2\nABC" />
+                <Button android:id="@+id/btnClear" style="@style/T9Key" android:layout_marginEnd="4dp" android:text="@string/btn_clear" />
+                <Button android:id="@+id/btn2" style="@style/T9Key" android:layout_marginStart="2dp" android:layout_marginEnd="2dp" android:text="1·2\nABC" />
                 <Button android:id="@+id/btn3" style="@style/T9Key" android:layout_marginStart="4dp" android:text="3\nDEF" />
             </TableRow>
 
@@ -44,16 +44,10 @@
                 <Button android:id="@+id/btn6" style="@style/T9Key" android:layout_marginStart="4dp" android:text="6\nMNO" />
             </TableRow>
 
-            <TableRow android:layout_marginBottom="4dp">
+            <TableRow>
                 <Button android:id="@+id/btn7" style="@style/T9Key" android:layout_marginEnd="4dp" android:text="7\nPQRS" />
                 <Button android:id="@+id/btn8" style="@style/T9Key" android:layout_marginStart="2dp" android:layout_marginEnd="2dp" android:text="8\nTUV" />
-                <Button android:id="@+id/btn9" style="@style/T9Key" android:layout_marginStart="4dp" android:text="9\nWXYZ" />
-            </TableRow>
-
-            <TableRow>
-                <Button android:id="@+id/btnBackspace" style="@style/T9Key" android:layout_marginEnd="4dp" android:text="@string/btn_backspace" android:textSize="20sp" />
-                <Button android:id="@+id/btn0" style="@style/T9Key" android:layout_marginStart="2dp" android:layout_marginEnd="2dp" android:text="0" />
-                <Button android:id="@+id/btnClear" style="@style/T9Key" android:layout_marginStart="4dp" android:text="@string/btn_clear" />
+                <Button android:id="@+id/btn9" style="@style/T9Key" android:layout_marginStart="4dp" android:text="9·0\nWXYZ" />
             </TableRow>
 
         </TableLayout>

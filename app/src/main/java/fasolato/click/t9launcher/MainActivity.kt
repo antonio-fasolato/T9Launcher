@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -15,7 +14,6 @@ import android.view.ViewTreeObserver
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
@@ -37,14 +35,11 @@ class MainActivity : AppCompatActivity() {
 
     private val currentDigits = StringBuilder()
     private var allApps: List<AppInfo> = emptyList()
-    private var isSettingsMode = false
     private lateinit var launchTracker: LaunchTracker
 
     private lateinit var appAdapter: AppAdapter
-    private lateinit var settingsAdapter: SettingsAdapter
     private lateinit var skeletonAdapter: SkeletonAdapter
     private lateinit var rvApps: RecyclerView
-    private lateinit var btn1: Button
 
     private val packageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -70,10 +65,8 @@ class MainActivity : AppCompatActivity() {
 
         launchTracker = LaunchTracker(this)
         rvApps = findViewById(R.id.rvApps)
-        btn1 = findViewById(R.id.btn1)
 
         appAdapter = AppAdapter(emptyList(), { app -> launchApp(app) }, { app, view -> showAppMenu(app, view) })
-        settingsAdapter = SettingsAdapter(emptyList()) { entry -> launchSettings(entry) }
         skeletonAdapter = SkeletonAdapter(3)
 
         rvApps.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -133,7 +126,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupKeyboard() {
         val digitButtons = mapOf(
-            R.id.btn1 to '1',
             R.id.btn2 to '2',
             R.id.btn3 to '3',
             R.id.btn4 to '4',
@@ -141,25 +133,12 @@ class MainActivity : AppCompatActivity() {
             R.id.btn6 to '6',
             R.id.btn7 to '7',
             R.id.btn8 to '8',
-            R.id.btn9 to '9',
-            R.id.btn0 to '0'
+            R.id.btn9 to '9'
         )
 
         for ((id, digit) in digitButtons) {
             findViewById<Button>(id).setOnClickListener {
-                if (digit in t9Map) {
-                    currentDigits.append(digit)
-                    updateSearch()
-                }
-            }
-        }
-
-        // btn1 è il toggle impostazioni, sovrascrive il listener del loop
-        btn1.setOnClickListener { toggleSettingsMode() }
-
-        findViewById<Button>(R.id.btnBackspace).setOnClickListener {
-            if (currentDigits.isNotEmpty()) {
-                currentDigits.deleteCharAt(currentDigits.length - 1)
+                currentDigits.append(digit)
                 updateSearch()
             }
         }
@@ -168,24 +147,6 @@ class MainActivity : AppCompatActivity() {
             currentDigits.clear()
             updateSearch()
         }
-    }
-
-    private fun toggleSettingsMode() {
-        isSettingsMode = !isSettingsMode
-
-        currentDigits.clear()
-
-        if (isSettingsMode) {
-            btn1.backgroundTintList = ColorStateList.valueOf(getColor(R.color.key_selected_bg))
-            btn1.setTextColor(getColor(R.color.key_selected_text))
-            rvApps.adapter = settingsAdapter
-        } else {
-            btn1.backgroundTintList = ColorStateList.valueOf(getColor(R.color.key_background))
-            btn1.setTextColor(getColor(R.color.key_text))
-            rvApps.adapter = appAdapter
-        }
-
-        updateSearch()
     }
 
     private fun loadApps() {
@@ -207,7 +168,7 @@ class MainActivity : AppCompatActivity() {
 
             runOnUiThread {
                 allApps = loaded
-                if (!isSettingsMode) rvApps.adapter = appAdapter
+                rvApps.adapter = appAdapter
                 updateSearch()
             }
         }.start()
@@ -215,20 +176,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateSearch() {
         val digits = currentDigits.toString()
-
-        if (isSettingsMode) {
-            val filtered = if (digits.isEmpty()) SettingsRepository.entries
-            else SettingsRepository.entries.filter { matchesT9(it.name, digits) }
-            settingsAdapter.updateEntries(filtered)
-        } else {
-            val filtered = if (digits.isEmpty()) allApps
-            else allApps.filter { matchesT9(it.name, digits) }
-            val sorted = filtered.sortedWith(
-                compareByDescending<AppInfo> { launchTracker.getLaunchCount(it.packageName) }
-                    .thenBy { it.name.lowercase() }
-            )
-            appAdapter.updateApps(sorted, digits)
-        }
+        val filtered = if (digits.isEmpty()) allApps
+        else allApps.filter { matchesT9(it.name, digits) }
+        val sorted = filtered.sortedWith(
+            compareByDescending<AppInfo> { launchTracker.getLaunchCount(it.packageName) }
+                .thenBy { it.name.lowercase() }
+        )
+        appAdapter.updateApps(sorted, digits)
     }
 
     private fun matchesT9(name: String, digits: String): Boolean {
@@ -279,16 +233,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(launchIntent)
         } else {
             Toast.makeText(this, "Impossibile avviare ${app.name}", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun launchSettings(entry: SettingsEntry) {
-        try {
-            startActivity(Intent(entry.action).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            })
-        } catch (e: Exception) {
-            Toast.makeText(this, "Impostazione non disponibile", Toast.LENGTH_SHORT).show()
         }
     }
 }
