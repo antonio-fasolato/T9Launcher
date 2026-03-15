@@ -4,8 +4,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.Button
@@ -14,6 +17,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -62,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         tvSearchDisplay = findViewById(R.id.tvSearchDisplay)
 
         val rvApps = findViewById<RecyclerView>(R.id.rvApps)
-        adapter = AppAdapter(emptyList()) { app -> launchApp(app) }
+        adapter = AppAdapter(emptyList(), { app -> launchApp(app) }, { app, view -> showAppMenu(app, view) })
         rvApps.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         rvApps.adapter = adapter
 
@@ -210,6 +214,31 @@ class MainActivity : AppCompatActivity() {
             if (word[i] !in letters) return false
         }
         return true
+    }
+
+    private fun showAppMenu(app: AppInfo, anchor: View) {
+        val popup = PopupMenu(this, anchor)
+        popup.menuInflater.inflate(R.menu.menu_app_popup, popup.menu)
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_app_info -> {
+                    startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.parse("package:${app.packageName}")
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    })
+                    true
+                }
+                R.id.action_uninstall -> {
+                    startActivity(Intent(Intent.ACTION_DELETE).apply {
+                        data = Uri.parse("package:${app.packageName}")
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    })
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
     }
 
     private fun launchApp(app: AppInfo) {

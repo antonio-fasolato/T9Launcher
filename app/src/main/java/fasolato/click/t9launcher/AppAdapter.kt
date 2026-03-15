@@ -16,7 +16,8 @@ data class AppInfo(
 
 class AppAdapter(
     private var apps: List<AppInfo>,
-    private val onAppClick: (AppInfo) -> Unit
+    private val onAppClick: (AppInfo) -> Unit,
+    private val onAppLongClick: (AppInfo, View) -> Unit = { _, _ -> }
 ) : RecyclerView.Adapter<AppAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -35,6 +36,10 @@ class AppAdapter(
         holder.icon.setImageDrawable(app.icon)
         holder.name.text = app.name
         holder.itemView.setOnClickListener { onAppClick(app) }
+        holder.itemView.setOnLongClickListener { view ->
+            onAppLongClick(app, view)
+            true
+        }
     }
 
     override fun getItemCount() = apps.size
