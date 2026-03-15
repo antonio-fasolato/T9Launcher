@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appAdapter: AppAdapter
     private lateinit var settingsAdapter: SettingsAdapter
-    private lateinit var tvSearchDisplay: TextView
     private lateinit var rvApps: RecyclerView
     private lateinit var btn1: Button
 
@@ -69,7 +68,6 @@ class MainActivity : AppCompatActivity() {
         })
 
         launchTracker = LaunchTracker(this)
-        tvSearchDisplay = findViewById(R.id.tvSearchDisplay)
         rvApps = findViewById(R.id.rvApps)
         btn1 = findViewById(R.id.btn1)
 
@@ -178,12 +176,10 @@ class MainActivity : AppCompatActivity() {
         if (isSettingsMode) {
             btn1.backgroundTintList = ColorStateList.valueOf(getColor(R.color.key_selected_bg))
             btn1.setTextColor(getColor(R.color.key_selected_text))
-            tvSearchDisplay.hint = getString(R.string.search_hint_settings)
             rvApps.adapter = settingsAdapter
         } else {
             btn1.backgroundTintList = ColorStateList.valueOf(getColor(R.color.key_background))
             btn1.setTextColor(getColor(R.color.key_text))
-            tvSearchDisplay.hint = getString(R.string.search_hint)
             rvApps.adapter = appAdapter
         }
 
@@ -214,15 +210,8 @@ class MainActivity : AppCompatActivity() {
         }.start()
     }
 
-    private fun digitsToLetterGroups(digits: String): String =
-        digits.map { d ->
-            val letters = t9Map[d]?.uppercase()
-            if (letters != null) "$d·$letters" else d.toString()
-        }.joinToString("  ")
-
     private fun updateSearch() {
         val digits = currentDigits.toString()
-        tvSearchDisplay.text = digitsToLetterGroups(digits)
 
         if (isSettingsMode) {
             val filtered = if (digits.isEmpty()) SettingsRepository.entries
