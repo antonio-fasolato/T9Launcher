@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     private val currentDigits = StringBuilder()
     private var allApps: List<AppInfo> = emptyList()
     private var isSettingsMode = false
+    private lateinit var launchTracker: LaunchTracker
 
     private lateinit var appAdapter: AppAdapter
     private lateinit var settingsAdapter: SettingsAdapter
@@ -67,6 +68,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        launchTracker = LaunchTracker(this)
         tvSearchDisplay = findViewById(R.id.tvSearchDisplay)
         rvApps = findViewById(R.id.rvApps)
         btn1 = findViewById(R.id.btn1)
@@ -229,7 +231,11 @@ class MainActivity : AppCompatActivity() {
         } else {
             val filtered = if (digits.isEmpty()) allApps
             else allApps.filter { matchesT9(it.name, digits) }
-            appAdapter.updateApps(filtered)
+            val sorted = filtered.sortedWith(
+                compareByDescending<AppInfo> { launchTracker.getLaunchCount(it.packageName) }
+                    .thenBy { it.name.lowercase() }
+            )
+            appAdapter.updateApps(sorted)
         }
     }
 
@@ -275,6 +281,7 @@ class MainActivity : AppCompatActivity() {
     private fun launchApp(app: AppInfo) {
         val launchIntent = packageManager.getLaunchIntentForPackage(app.packageName)
         if (launchIntent != null) {
+            launchTracker.recordLaunch(app.packageName)
             startActivity(launchIntent)
         } else {
             Toast.makeText(this, "Impossibile avviare ${app.name}", Toast.LENGTH_SHORT).show()
