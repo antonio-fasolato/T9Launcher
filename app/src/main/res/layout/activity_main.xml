@@ -17,6 +17,18 @@
         android:paddingStart="12dp"
         android:paddingEnd="12dp">
 
+        <!-- No results label -->
+        <TextView
+            android:id="@+id/tvNoResults"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_results"
+            android:textColor="@color/hint_text"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginBottom="4dp"
+            android:visibility="gone" />
+
         <!-- App icons row -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvApps"

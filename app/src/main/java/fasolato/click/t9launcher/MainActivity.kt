@@ -14,6 +14,7 @@ import android.view.ViewTreeObserver
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appAdapter: AppAdapter
     private lateinit var skeletonAdapter: SkeletonAdapter
     private lateinit var rvApps: RecyclerView
+    private lateinit var tvNoResults: TextView
 
     private val packageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -65,6 +67,7 @@ class MainActivity : AppCompatActivity() {
 
         launchTracker = LaunchTracker(this)
         rvApps = findViewById(R.id.rvApps)
+        tvNoResults = findViewById(R.id.tvNoResults)
 
         appAdapter = AppAdapter(emptyList(), { app -> launchApp(app) }, { app, view -> showAppMenu(app, view) })
         skeletonAdapter = SkeletonAdapter(3)
@@ -178,11 +181,19 @@ class MainActivity : AppCompatActivity() {
         val digits = currentDigits.toString()
         val filtered = if (digits.isEmpty()) allApps
         else allApps.filter { matchesT9(it.name, digits) }
-        val sorted = filtered.sortedWith(
-            compareByDescending<AppInfo> { launchTracker.getLaunchCount(it.packageName) }
-                .thenBy { it.name.lowercase() }
-        )
-        appAdapter.updateApps(sorted, digits)
+
+        if (filtered.isEmpty() && digits.isNotEmpty()) {
+            tvNoResults.visibility = View.VISIBLE
+            rvApps.adapter = skeletonAdapter
+        } else {
+            tvNoResults.visibility = View.GONE
+            rvApps.adapter = appAdapter
+            val sorted = filtered.sortedWith(
+                compareByDescending<AppInfo> { launchTracker.getLaunchCount(it.packageName) }
+                    .thenBy { it.name.lowercase() }
+            )
+            appAdapter.updateApps(sorted, digits)
+        }
     }
 
     private fun matchesT9(name: String, digits: String): Boolean {
