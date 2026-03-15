@@ -218,7 +218,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun digitsToLetterGroups(digits: String): String =
-        digits.map { t9Map[it]?.uppercase() ?: it.toString() }.joinToString(" ")
+        digits.map { d ->
+            val letters = t9Map[d]?.uppercase()
+            if (letters != null) "$d·$letters" else d.toString()
+        }.joinToString("  ")
 
     private fun updateSearch() {
         val digits = currentDigits.toString()
@@ -247,8 +250,10 @@ class MainActivity : AppCompatActivity() {
     private fun wordMatchesT9(word: String, digits: String): Boolean {
         if (word.length < digits.length) return false
         for (i in digits.indices) {
-            val letters = t9Map[digits[i]] ?: return false
-            if (word[i] !in letters) return false
+            val digit = digits[i]
+            val letters = t9Map[digit]
+            val matches = (letters != null && word[i] in letters) || word[i] == digit
+            if (!matches) return false
         }
         return true
     }
