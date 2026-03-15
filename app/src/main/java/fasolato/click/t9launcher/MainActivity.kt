@@ -243,7 +243,7 @@ class MainActivity : AppCompatActivity() {
             launchTracker.recordLaunch(app.packageName)
             startActivity(launchIntent)
         } else {
-            Toast.makeText(this, "Impossibile avviare ${app.name}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_launch_app, app.name), Toast.LENGTH_SHORT).show()
         }
     }
 }

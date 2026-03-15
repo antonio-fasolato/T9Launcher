@@ -1,10 +1,8 @@
 <resources>
     <string name="app_name">T9 Launcher</string>
-    <string name="search_hint">Digita per cercare…</string>
-    <string name="no_results">Nessuna app trovata</string>
-    <string name="btn_backspace">⌫</string>
+    <string name="no_results">No applications found</string>
     <string name="btn_clear">C\n⌫</string>
-    <string name="search_hint_settings">Cerca nelle impostazioni…</string>
-    <string name="menu_app_info">Informazioni app</string>
-    <string name="menu_uninstall">Disinstalla</string>
+    <string name="menu_app_info">App info</string>
+    <string name="menu_uninstall">Uninstall</string>
+    <string name="error_launch_app">Cannot launch %s</string>
 </resources>
