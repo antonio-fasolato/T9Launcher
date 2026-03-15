@@ -107,25 +107,22 @@ class MainActivity : AppCompatActivity() {
         val screenHeight = dm.heightPixels
         val cardWidth = card.width
         val cardHeight = card.height
-        val margin = (60 * dm.density).toInt()
+        val marginEdge = (20 * dm.density).toInt()
+        val marginBottom = (140 * dm.density).toInt()
 
         val sourceBounds = intent.sourceBounds
-        var left: Int
-        var top: Int
+        val left: Int
+        val top: Int
 
         if (sourceBounds != null) {
-            left = sourceBounds.centerX() - cardWidth / 2
-            top = sourceBounds.bottom + margin
-            if (top + cardHeight > screenHeight - margin) {
-                top = sourceBounds.top - cardHeight - margin
-            }
+            val iconCenterX = sourceBounds.centerX()
+            val iconCenterY = sourceBounds.centerY()
+            left = if (iconCenterX < screenWidth / 2) marginEdge else screenWidth - cardWidth - marginEdge
+            top = if (iconCenterY < screenHeight / 2) marginEdge else screenHeight - cardHeight - marginBottom
         } else {
             left = (screenWidth - cardWidth) / 2
             top = (screenHeight - cardHeight) / 2
         }
-
-        left = left.coerceIn(margin, screenWidth - cardWidth - margin)
-        top = top.coerceIn(margin, screenHeight - cardHeight - margin)
 
         val params = card.layoutParams as FrameLayout.LayoutParams
         params.gravity = Gravity.TOP or Gravity.START
