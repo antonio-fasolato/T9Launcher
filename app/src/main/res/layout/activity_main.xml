@@ -34,13 +34,14 @@
             android:gravity="center_vertical"
             android:layout_marginBottom="8dp" />
 
-        <!-- App icons grid -->
+        <!-- App icons row -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvApps"
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:clipToPadding="false" />
+            android:clipToPadding="false"
+            android:orientation="horizontal" />
 
         <!-- T9 Keyboard -->
         <TableLayout

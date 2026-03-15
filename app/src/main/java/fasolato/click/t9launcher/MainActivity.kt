@@ -11,7 +11,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         val rvApps = findViewById<RecyclerView>(R.id.rvApps)
         adapter = AppAdapter(emptyList()) { app -> launchApp(app) }
-        rvApps.layoutManager = GridLayoutManager(this, 4)
+        rvApps.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         rvApps.adapter = adapter
 
         setupKeyboard()
