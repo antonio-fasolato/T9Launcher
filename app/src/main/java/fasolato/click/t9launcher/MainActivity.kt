@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appAdapter: AppAdapter
     private lateinit var settingsAdapter: SettingsAdapter
+    private lateinit var skeletonAdapter: SkeletonAdapter
     private lateinit var rvApps: RecyclerView
     private lateinit var btn1: Button
 
@@ -73,9 +74,10 @@ class MainActivity : AppCompatActivity() {
 
         appAdapter = AppAdapter(emptyList(), { app -> launchApp(app) }, { app, view -> showAppMenu(app, view) })
         settingsAdapter = SettingsAdapter(emptyList()) { entry -> launchSettings(entry) }
+        skeletonAdapter = SkeletonAdapter(3)
 
         rvApps.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        rvApps.adapter = appAdapter
+        rvApps.adapter = skeletonAdapter
 
         setupKeyboard()
         loadApps()
@@ -205,6 +207,7 @@ class MainActivity : AppCompatActivity() {
 
             runOnUiThread {
                 allApps = loaded
+                if (!isSettingsMode) rvApps.adapter = appAdapter
                 updateSearch()
             }
         }.start()
