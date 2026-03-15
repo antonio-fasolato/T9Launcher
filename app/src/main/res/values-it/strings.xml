@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">T9 Launcher</string>
+    <string name="no_results">Nessuna applicazione trovata</string>
+    <string name="btn_clear">C\n⌫</string>
+    <string name="menu_app_info">Informazioni app</string>
+    <string name="menu_uninstall">Disinstalla</string>
+    <string name="error_launch_app">Impossibile avviare %s</string>
+</resources>
