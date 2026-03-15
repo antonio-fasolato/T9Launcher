@@ -3,6 +3,8 @@
     <color name="card_background">#EE1E1E2E</color>
     <color name="key_background">#FF2D2D3F</color>
     <color name="key_text">#FFFFFFFF</color>
+    <color name="key_selected_bg">#FF1976D2</color>
+    <color name="key_selected_text">#FFFFFFFF</color>
     <color name="search_background">#FF13131F</color>
     <color name="hint_text">#FF888888</color>
 </resources>

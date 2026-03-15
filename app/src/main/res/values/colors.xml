@@ -10,6 +10,8 @@
     <color name="card_background">#EEF5F5F5</color>
     <color name="key_background">#FFE8E8E8</color>
     <color name="key_text">#FF212121</color>
+    <color name="key_selected_bg">#FF1565C0</color>
+    <color name="key_selected_text">#FFFFFFFF</color>
     <color name="search_background">#FFFAFAFA</color>
     <color name="hint_text">#FF888888</color>
 </resources>

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -36,8 +37,13 @@ class MainActivity : AppCompatActivity() {
 
     private val currentDigits = StringBuilder()
     private var allApps: List<AppInfo> = emptyList()
-    private lateinit var adapter: AppAdapter
+    private var isSettingsMode = false
+
+    private lateinit var appAdapter: AppAdapter
+    private lateinit var settingsAdapter: SettingsAdapter
     private lateinit var tvSearchDisplay: TextView
+    private lateinit var rvApps: RecyclerView
+    private lateinit var btn1: Button
 
     private val packageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -51,10 +57,8 @@ class MainActivity : AppCompatActivity() {
 
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
-        // Click sull'area trasparente → chiudi
         findViewById<FrameLayout>(R.id.flBackground).setOnClickListener { finishAndRemoveTask() }
 
-        // Posiziona la card vicino all'icona sorgente dopo il layout
         val llCard = findViewById<LinearLayout>(R.id.llCard)
         llCard.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
@@ -64,11 +68,14 @@ class MainActivity : AppCompatActivity() {
         })
 
         tvSearchDisplay = findViewById(R.id.tvSearchDisplay)
+        rvApps = findViewById(R.id.rvApps)
+        btn1 = findViewById(R.id.btn1)
 
-        val rvApps = findViewById<RecyclerView>(R.id.rvApps)
-        adapter = AppAdapter(emptyList(), { app -> launchApp(app) }, { app, view -> showAppMenu(app, view) })
+        appAdapter = AppAdapter(emptyList(), { app -> launchApp(app) }, { app, view -> showAppMenu(app, view) })
+        settingsAdapter = SettingsAdapter(emptyList()) { entry -> launchSettings(entry) }
+
         rvApps.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        rvApps.adapter = adapter
+        rvApps.adapter = appAdapter
 
         setupKeyboard()
         loadApps()
@@ -148,6 +155,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // btn1 è il toggle impostazioni, sovrascrive il listener del loop
+        btn1.setOnClickListener { toggleSettingsMode() }
+
         findViewById<Button>(R.id.btnBackspace).setOnClickListener {
             if (currentDigits.isNotEmpty()) {
                 currentDigits.deleteCharAt(currentDigits.length - 1)
@@ -159,6 +169,26 @@ class MainActivity : AppCompatActivity() {
             currentDigits.clear()
             updateSearch()
         }
+    }
+
+    private fun toggleSettingsMode() {
+        isSettingsMode = !isSettingsMode
+
+        currentDigits.clear()
+
+        if (isSettingsMode) {
+            btn1.backgroundTintList = ColorStateList.valueOf(getColor(R.color.key_selected_bg))
+            btn1.setTextColor(getColor(R.color.key_selected_text))
+            tvSearchDisplay.hint = getString(R.string.search_hint_settings)
+            rvApps.adapter = settingsAdapter
+        } else {
+            btn1.backgroundTintList = ColorStateList.valueOf(getColor(R.color.key_background))
+            btn1.setTextColor(getColor(R.color.key_text))
+            tvSearchDisplay.hint = getString(R.string.search_hint)
+            rvApps.adapter = appAdapter
+        }
+
+        updateSearch()
     }
 
     private fun loadApps() {
@@ -192,18 +222,19 @@ class MainActivity : AppCompatActivity() {
         val digits = currentDigits.toString()
         tvSearchDisplay.text = digitsToLetterGroups(digits)
 
-        val filtered = if (digits.isEmpty()) allApps
-        else allApps.filter { matchesT9(it.name, digits) }
-
-        adapter.updateApps(filtered)
+        if (isSettingsMode) {
+            val filtered = if (digits.isEmpty()) SettingsRepository.entries
+            else SettingsRepository.entries.filter { matchesT9(it.name, digits) }
+            settingsAdapter.updateEntries(filtered)
+        } else {
+            val filtered = if (digits.isEmpty()) allApps
+            else allApps.filter { matchesT9(it.name, digits) }
+            appAdapter.updateApps(filtered)
+        }
     }
 
-    /**
-     * Restituisce true se almeno una parola del nome dell'app inizia con
-     * la sequenza di lettere corrispondente alle cifre T9.
-     */
-    private fun matchesT9(appName: String, digits: String): Boolean {
-        val words = appName.lowercase().split(Regex("[\\s\\-_.]+"))
+    private fun matchesT9(name: String, digits: String): Boolean {
+        val words = name.lowercase().split(Regex("[\\s\\-_.]+"))
         return words.any { wordMatchesT9(it, digits) }
     }
 
@@ -247,6 +278,16 @@ class MainActivity : AppCompatActivity() {
             startActivity(launchIntent)
         } else {
             Toast.makeText(this, "Impossibile avviare ${app.name}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun launchSettings(entry: SettingsEntry) {
+        try {
+            startActivity(Intent(entry.action).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            })
+        } catch (e: Exception) {
+            Toast.makeText(this, "Impostazione non disponibile", Toast.LENGTH_SHORT).show()
         }
     }
 }
