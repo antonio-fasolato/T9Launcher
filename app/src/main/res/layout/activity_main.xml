@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/flBackground"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <LinearLayout
+        android:id="@+id/llCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:background="@drawable/bg_launcher_card"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp">
+
+        <!-- Search display -->
+        <TextView
+            android:id="@+id/tvSearchDisplay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/search_background"
+            android:text=""
+            android:hint="@string/search_hint"
+            android:textColorHint="@color/hint_text"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:fontFamily="monospace"
+            android:padding="12dp"
+            android:minHeight="52dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp" />
+
+        <!-- App icons grid -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvApps"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:layout_marginBottom="12dp"
+            android:clipToPadding="false" />
+
+        <!-- T9 Keyboard -->
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*">
+
+            <TableRow android:layout_marginBottom="4dp">
+                <Button android:id="@+id/btn1" style="@style/T9Key" android:layout_marginEnd="4dp" android:text="1" />
+                <Button android:id="@+id/btn2" style="@style/T9Key" android:layout_marginStart="2dp" android:layout_marginEnd="2dp" android:text="2\nABC" />
+                <Button android:id="@+id/btn3" style="@style/T9Key" android:layout_marginStart="4dp" android:text="3\nDEF" />
+            </TableRow>
+
+            <TableRow android:layout_marginBottom="4dp">
+                <Button android:id="@+id/btn4" style="@style/T9Key" android:layout_marginEnd="4dp" android:text="4\nGHI" />
+                <Button android:id="@+id/btn5" style="@style/T9Key" android:layout_marginStart="2dp" android:layout_marginEnd="2dp" android:text="5\nJKL" />
+                <Button android:id="@+id/btn6" style="@style/T9Key" android:layout_marginStart="4dp" android:text="6\nMNO" />
+            </TableRow>
+
+            <TableRow android:layout_marginBottom="4dp">
+                <Button android:id="@+id/btn7" style="@style/T9Key" android:layout_marginEnd="4dp" android:text="7\nPQRS" />
+                <Button android:id="@+id/btn8" style="@style/T9Key" android:layout_marginStart="2dp" android:layout_marginEnd="2dp" android:text="8\nTUV" />
+                <Button android:id="@+id/btn9" style="@style/T9Key" android:layout_marginStart="4dp" android:text="9\nWXYZ" />
+            </TableRow>
+
+            <TableRow>
+                <Button android:id="@+id/btnBackspace" style="@style/T9Key" android:layout_marginEnd="4dp" android:text="@string/btn_backspace" android:textSize="20sp" />
+                <Button android:id="@+id/btn0" style="@style/T9Key" android:layout_marginStart="2dp" android:layout_marginEnd="2dp" android:text="0" />
+                <Button android:id="@+id/btnClear" style="@style/T9Key" android:layout_marginStart="4dp" android:text="@string/btn_clear" />
+            </TableRow>
+
+        </TableLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">T9 Launcher</string>
+    <string name="search_hint">Digita per cercare…</string>
+    <string name="no_results">Nessuna app trovata</string>
+    <string name="btn_backspace">⌫</string>
+    <string name="btn_clear">C</string>
 </resources>
