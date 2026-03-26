@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -18,8 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,9 +38,9 @@ class MainActivity : AppCompatActivity() {
     private var allApps: List<AppInfo> = emptyList()
     private lateinit var launchTracker: LaunchTracker
 
-    private lateinit var appAdapter: AppAdapter
-    private lateinit var skeletonAdapter: SkeletonAdapter
-    private lateinit var rvApps: RecyclerView
+    private lateinit var appPageAdapter: AppPageAdapter
+    private lateinit var rvApps: ViewPager2
+    private lateinit var llPageDots: LinearLayout
     private lateinit var tvNoResults: TextView
 
     private val packageReceiver = object : BroadcastReceiver() {
@@ -71,13 +71,17 @@ class MainActivity : AppCompatActivity() {
 
         launchTracker = LaunchTracker(this)
         rvApps = findViewById(R.id.rvApps)
+        llPageDots = findViewById(R.id.llPageDots)
         tvNoResults = findViewById(R.id.tvNoResults)
 
-        appAdapter = AppAdapter(emptyList(), { app -> launchApp(app) }, { app, view -> showAppMenu(app, view) })
-        skeletonAdapter = SkeletonAdapter(3)
+        appPageAdapter = AppPageAdapter({ app -> launchApp(app) }, { app, view -> showAppMenu(app, view) })
+        rvApps.adapter = appPageAdapter
 
-        rvApps.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        rvApps.adapter = skeletonAdapter
+        rvApps.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                updateDots(appPageAdapter.getPageCount(), position)
+            }
+        })
 
         setupKeyboard()
         loadApps()
@@ -175,7 +179,6 @@ class MainActivity : AppCompatActivity() {
 
             runOnUiThread {
                 allApps = loaded
-                rvApps.adapter = appAdapter
                 updateSearch()
             }
         }.start()
@@ -201,21 +204,24 @@ class MainActivity : AppCompatActivity() {
                 .sortedBy { it.name.lowercase() }
             val finalList = prioritized + remaining
             tvNoResults.visibility = View.GONE
-            rvApps.adapter = appAdapter
-            appAdapter.updateApps(finalList, digits)
+            appPageAdapter.updateApps(finalList, digits)
+            rvApps.setCurrentItem(0, false)
+            updateDots(appPageAdapter.getPageCount(), 0)
         } else {
             val filtered = allApps.filter { matchesT9(it.name, digits) }
             if (filtered.isEmpty()) {
                 tvNoResults.visibility = View.VISIBLE
-                rvApps.adapter = skeletonAdapter
+                appPageAdapter.updateApps(emptyList(), digits)
+                updateDots(0, 0)
             } else {
                 tvNoResults.visibility = View.GONE
-                rvApps.adapter = appAdapter
                 val sorted = filtered.sortedWith(
                     compareByDescending<AppInfo> { launchTracker.getLaunchCount(it.packageName) }
                         .thenBy { it.name.lowercase() }
                 )
-                appAdapter.updateApps(sorted, digits)
+                appPageAdapter.updateApps(sorted, digits)
+                rvApps.setCurrentItem(0, false)
+                updateDots(appPageAdapter.getPageCount(), 0)
             }
         }
     }
@@ -259,6 +265,22 @@ class MainActivity : AppCompatActivity() {
             }
         }
         popup.show()
+    }
+
+    private fun updateDots(count: Int, activePage: Int) {
+        llPageDots.removeAllViews()
+        if (count <= 1) return
+        val size = (8 * resources.displayMetrics.density).toInt()
+        val margin = (4 * resources.displayMetrics.density).toInt()
+        repeat(count) { i ->
+            val dot = View(this)
+            dot.background = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setColor(if (i == activePage) 0xFF666666.toInt() else 0xFFCCCCCC.toInt())
+            }
+            val params = LinearLayout.LayoutParams(size, size).apply { setMargins(margin, 0, margin, 0) }
+            llPageDots.addView(dot, params)
+        }
     }
 
     private fun launchApp(app: AppInfo) {
