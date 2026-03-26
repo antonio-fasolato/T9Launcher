@@ -45,6 +45,10 @@ class MainActivity : AppCompatActivity() {
 
     private val packageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action == Intent.ACTION_PACKAGE_ADDED && !intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)) {
+                val packageName = intent.data?.schemeSpecificPart
+                if (packageName != null) launchTracker.recordInstall(packageName)
+            }
             loadApps()
         }
     }
@@ -179,20 +183,40 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateSearch() {
         val digits = currentDigits.toString()
-        val filtered = if (digits.isEmpty()) allApps
-        else allApps.filter { matchesT9(it.name, digits) }
 
-        if (filtered.isEmpty() && digits.isNotEmpty()) {
-            tvNoResults.visibility = View.VISIBLE
-            rvApps.adapter = skeletonAdapter
-        } else {
+        if (digits.isEmpty()) {
+            val lastLaunched = launchTracker.getLastLaunchTimestamps()
+            val sorted = allApps
+                .filter { lastLaunched.containsKey(it.packageName) }
+                .sortedByDescending { lastLaunched[it.packageName] }
+            val recentlyInstalled = launchTracker.getRecentlyInstalledApp(10 * 60 * 1000)
+            val prioritized = if (recentlyInstalled != null) {
+                val recentApp = allApps.find { it.packageName == recentlyInstalled }
+                if (recentApp != null) listOf(recentApp) + sorted.filter { it.packageName != recentlyInstalled }
+                else sorted
+            } else sorted
+            val prioritizedPackages = prioritized.map { it.packageName }.toSet()
+            val remaining = allApps
+                .filter { it.packageName !in prioritizedPackages }
+                .sortedBy { it.name.lowercase() }
+            val finalList = prioritized + remaining
             tvNoResults.visibility = View.GONE
             rvApps.adapter = appAdapter
-            val sorted = filtered.sortedWith(
-                compareByDescending<AppInfo> { launchTracker.getLaunchCount(it.packageName) }
-                    .thenBy { it.name.lowercase() }
-            )
-            appAdapter.updateApps(sorted, digits)
+            appAdapter.updateApps(finalList, digits)
+        } else {
+            val filtered = allApps.filter { matchesT9(it.name, digits) }
+            if (filtered.isEmpty()) {
+                tvNoResults.visibility = View.VISIBLE
+                rvApps.adapter = skeletonAdapter
+            } else {
+                tvNoResults.visibility = View.GONE
+                rvApps.adapter = appAdapter
+                val sorted = filtered.sortedWith(
+                    compareByDescending<AppInfo> { launchTracker.getLaunchCount(it.packageName) }
+                        .thenBy { it.name.lowercase() }
+                )
+                appAdapter.updateApps(sorted, digits)
+            }
         }
     }
 
