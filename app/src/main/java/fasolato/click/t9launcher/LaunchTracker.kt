@@ -21,6 +21,11 @@ class LaunchTracker(context: Context) {
         return loadHistory()[packageName]?.count { it >= cutoff } ?: 0
     }
 
+    fun getAllLaunchCounts(): Map<String, Int> {
+        val cutoff = System.currentTimeMillis() - tenDaysMs
+        return loadHistory().mapValues { (_, timestamps) -> timestamps.count { it >= cutoff } }
+    }
+
     fun getLastLaunchTimestamps(): Map<String, Long> {
         return loadHistory().mapValues { (_, timestamps) -> timestamps.max() }
     }

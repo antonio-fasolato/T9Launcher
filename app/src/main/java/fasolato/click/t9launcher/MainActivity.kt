@@ -75,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         tvNoResults = findViewById(R.id.tvNoResults)
 
         appPageAdapter = AppPageAdapter({ app -> launchApp(app) }, { app, view -> showAppMenu(app, view) })
+        appPageAdapter.packageManager = packageManager
         rvApps.adapter = appPageAdapter
 
         rvApps.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -171,8 +172,7 @@ class MainActivity : AppCompatActivity() {
                 .map { ri ->
                     AppInfo(
                         name = ri.loadLabel(pm).toString(),
-                        packageName = ri.activityInfo.packageName,
-                        icon = ri.loadIcon(pm)
+                        packageName = ri.activityInfo.packageName
                     )
                 }
                 .sortedBy { it.name.lowercase() }
@@ -215,8 +215,9 @@ class MainActivity : AppCompatActivity() {
                 updateDots(0, 0)
             } else {
                 tvNoResults.visibility = View.GONE
+                val counts = launchTracker.getAllLaunchCounts()
                 val sorted = filtered.sortedWith(
-                    compareByDescending<AppInfo> { launchTracker.getLaunchCount(it.packageName) }
+                    compareByDescending<AppInfo> { counts[it.packageName] ?: 0 }
                         .thenBy { it.name.lowercase() }
                 )
                 appPageAdapter.updateApps(sorted, digits)
