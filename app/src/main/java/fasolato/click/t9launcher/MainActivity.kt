@@ -59,6 +59,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        window.setBackgroundBlurRadius(20)
 
         findViewById<FrameLayout>(R.id.flBackground).setOnClickListener { finishAndRemoveTask() }
 
@@ -306,7 +307,7 @@ class MainActivity : AppCompatActivity() {
             val dot = View(this)
             dot.background = GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
-                setColor(if (i == activePage) 0xFF666666.toInt() else 0xFFCCCCCC.toInt())
+                setColor(if (i == activePage) 0xFFFFFFFF.toInt() else 0x66FFFFFF)
             }
             val params = LinearLayout.LayoutParams(size, size).apply { setMargins(margin, 0, margin, 0) }
             llPageDots.addView(dot, params)

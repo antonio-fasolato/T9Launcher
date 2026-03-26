@@ -106,7 +106,7 @@ class AppPageAdapter(
     private fun buildHighlightedName(name: String, digits: String): SpannableString {
         val spannable = SpannableString(name)
         if (digits.isEmpty()) return spannable
-        val highlightColor = 0xFFFFEB3B.toInt()
+        val highlightColor = 0xFFA78BFA.toInt()
         val delimiter = Regex("[\\s\\-_.]+")
         var pos = 0
         while (pos <= name.length) {

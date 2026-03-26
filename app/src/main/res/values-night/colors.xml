@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="card_background">#EE1E1E2E</color>
-    <color name="key_background">#FF2D2D3F</color>
+    <color name="card_background">#40FFFFFF</color>
+    <color name="key_background">#26FFFFFF</color>
     <color name="key_text">#FFFFFFFF</color>
-    <color name="key_selected_bg">#FF1976D2</color>
+    <color name="key_selected_bg">#A78BFA</color>
     <color name="key_selected_text">#FFFFFFFF</color>
-    <color name="search_background">#FF13131F</color>
-    <color name="hint_text">#FF888888</color>
+    <color name="hint_text">#CCFFFFFF</color>
+    <color name="clear_key_background">#60EF4444</color>
 </resources>
