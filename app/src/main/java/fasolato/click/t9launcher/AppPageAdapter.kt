@@ -1,6 +1,8 @@
 package fasolato.click.t9launcher
 
+import android.content.pm.PackageManager
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.BackgroundColorSpan
@@ -23,6 +25,8 @@ class AppPageAdapter(
 
     private var apps: List<AppInfo> = emptyList()
     private var currentDigits: String = ""
+    private val iconCache = HashMap<String, Drawable>()
+    var packageManager: PackageManager? = null
 
     private val t9Map = mapOf(
         '2' to "abc", '3' to "def", '4' to "ghi", '5' to "jkl",
@@ -61,7 +65,23 @@ class AppPageAdapter(
             itemView.layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
             if (appIndex < apps.size) {
                 val app = apps[appIndex]
-                itemView.findViewById<ImageView>(R.id.ivAppIcon).setImageDrawable(app.icon)
+                val iconView = itemView.findViewById<ImageView>(R.id.ivAppIcon)
+                val cached = iconCache[app.packageName]
+                if (cached != null) {
+                    iconView.setImageDrawable(cached)
+                } else {
+                    iconView.setImageDrawable(null)
+                    val pm = packageManager
+                    if (pm != null) {
+                        Thread {
+                            val icon = try { pm.getApplicationIcon(app.packageName) } catch (e: Exception) { null }
+                            if (icon != null) {
+                                iconCache[app.packageName] = icon
+                                iconView.post { iconView.setImageDrawable(icon) }
+                            }
+                        }.start()
+                    }
+                }
                 itemView.findViewById<TextView>(R.id.tvAppName).text =
                     buildHighlightedName(app.name, currentDigits)
                 itemView.setOnClickListener { onAppClick(app) }
