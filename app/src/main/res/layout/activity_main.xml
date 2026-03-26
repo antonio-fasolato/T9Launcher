@@ -29,14 +29,20 @@
             android:layout_marginBottom="4dp"
             android:visibility="gone" />
 
-        <!-- App icons row -->
-        <androidx.recyclerview.widget.RecyclerView
+        <!-- App icons pager -->
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/rvApps"
             android:layout_width="match_parent"
+            android:layout_height="88dp"
+            android:layout_marginBottom="4dp" />
+
+        <LinearLayout
+            android:id="@+id/llPageDots"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:clipToPadding="false"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
 
         <!-- T9 Keyboard -->
         <TableLayout

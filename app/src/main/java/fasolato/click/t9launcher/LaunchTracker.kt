@@ -21,6 +21,32 @@ class LaunchTracker(context: Context) {
         return loadHistory()[packageName]?.count { it >= cutoff } ?: 0
     }
 
+    fun getLastLaunchTimestamps(): Map<String, Long> {
+        return loadHistory().mapValues { (_, timestamps) -> timestamps.max() }
+    }
+
+    fun recordInstall(packageName: String) {
+        val json = prefs.getString("install_times", null)
+        val obj = if (json != null) JSONObject(json) else JSONObject()
+        obj.put(packageName, System.currentTimeMillis())
+        prefs.edit().putString("install_times", obj.toString()).apply()
+    }
+
+    fun getRecentlyInstalledApp(maxAgeMs: Long): String? {
+        val json = prefs.getString("install_times", null) ?: return null
+        val obj = JSONObject(json)
+        var latestPkg: String? = null
+        var latestTs = 0L
+        for (key in obj.keys()) {
+            val ts = obj.getLong(key)
+            if (ts > latestTs) {
+                latestTs = ts
+                latestPkg = key
+            }
+        }
+        return if (latestPkg != null && System.currentTimeMillis() - latestTs < maxAgeMs) latestPkg else null
+    }
+
     private fun loadHistory(): MutableMap<String, MutableList<Long>> {
         val json = prefs.getString("data", null) ?: return mutableMapOf()
         val result = mutableMapOf<String, MutableList<Long>>()
