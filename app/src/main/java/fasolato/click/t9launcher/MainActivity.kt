@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
 
     private val currentDigits = StringBuilder()
     private var allApps: List<AppInfo> = emptyList()
+    private var isFullListLoaded = false
     private lateinit var launchTracker: LaunchTracker
 
     private lateinit var appPageAdapter: AppPageAdapter
@@ -162,6 +163,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadApps() {
+        isFullListLoaded = false
+
+        // Lettura LaunchTracker: solo SharedPreferences, ~1ms, ok su main thread
+        val lastLaunched = launchTracker.getLastLaunchTimestamps()
+        val recentlyInstalled = launchTracker.getRecentlyInstalledApp(10 * 60 * 1000)
+        val priorityPackages = (lastLaunched.keys + listOfNotNull(recentlyInstalled)).toSet()
+
+        // Thread A: risolve nomi solo per i package noti (query mirate, molto più veloci)
+        if (priorityPackages.isNotEmpty()) {
+            Thread {
+                val pm = packageManager
+                val priorityApps = priorityPackages.mapNotNull { pkg ->
+                    try {
+                        val info = pm.getApplicationInfo(pkg, 0)
+                        AppInfo(name = pm.getApplicationLabel(info).toString(), packageName = pkg)
+                    } catch (e: Exception) { null }
+                }
+                runOnUiThread {
+                    if (!isFullListLoaded) {
+                        allApps = priorityApps
+                        updateSearch()
+                    }
+                }
+            }.start()
+        }
+
+        // Thread B: caricamento completo (lento)
         Thread {
             val pm = packageManager
             val intent = Intent(Intent.ACTION_MAIN, null).apply {
@@ -178,6 +206,7 @@ class MainActivity : AppCompatActivity() {
                 .sortedBy { it.name.lowercase() }
 
             runOnUiThread {
+                isFullListLoaded = true
                 allApps = loaded
                 updateSearch()
             }
