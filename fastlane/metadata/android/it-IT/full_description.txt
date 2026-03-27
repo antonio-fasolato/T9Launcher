@@ -1,0 +1,20 @@
+T9 Launcher appare come una scheda overlay traslucida, attivata da un collegamento nella schermata home. Invece di scorrere i drawer delle app o digitare su una tastiera completa, cerchi usando il tastierino numerico — proprio come la scrittura predittiva T9. Ogni tasto numerico corrisponde a un insieme di lettere, e il launcher filtra le app installate in tempo reale mentre premi i tasti.
+
+La scheda si posiziona vicino al punto in cui hai toccato lo schermo, mantiene il wallpaper visibile attraverso uno sfondo sfumato e si chiude non appena lanci un'app.
+
+Aggiungi un collegamento T9 Launcher alla tua schermata home. Toccandolo si apre la scheda overlay ancorata vicino alla posizione del tap.
+
+La scheda mostra una tastiera numerica 3×3 (tasti 2–9) con le mappature T9 standard: 2→ABC, 3→DEF, 4→GHI, 5→JKL, 6→MNO, 7→PQRS, 8→TUV, 9→WXYZ.
+
+Premendo i tasti, la lista delle app si filtra per mostrare solo quelle corrispondenti. La corrispondenza funziona sulla prima lettera di ogni parola nel nome dell'app: ad esempio, premendo 9 e poi 2 si trova "WhatsApp" (W→9, A→2). I caratteri corrispondenti vengono evidenziati nel nome dell'app.
+
+Le app trovate sono mostrate come schede con icona e nome, tre per pagina. Scorri a sinistra/destra per navigare tra le pagine. Tocca un'app per avviarla. Le app sono ordinate per frequenza di utilizzo negli ultimi 10 giorni, poi alfabeticamente.
+
+Tenendo premuto il tasto Cancella si apre la schermata Impostazioni, dove puoi:
+- Mostrare l'app installata più di recente in cima alla lista
+- Mostrare le app usate di recente quando non sono stati inseriti numeri
+- Cercare anche nelle descrizioni delle app (oltre ai nomi)
+
+Tenendo premuta un'app si apre un menu con le opzioni Info app e Disinstalla.
+
+Richiede Android 13 (API 33) o superiore.
