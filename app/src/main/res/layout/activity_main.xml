@@ -52,7 +52,12 @@
             android:stretchColumns="*">
 
             <TableRow android:layout_marginBottom="4dp">
-                <Button android:id="@+id/btnClear" style="@style/T9Key" android:layout_marginEnd="4dp" android:text="@string/btn_clear" android:backgroundTint="@color/clear_key_background" />
+                <Button android:id="@+id/btnClear" style="@style/T9Key" android:layout_marginEnd="4dp" android:text="@string/btn_clear" android:backgroundTint="@color/clear_key_background"
+                    app:icon="@drawable/ic_gear"
+                    app:iconSize="10dp"
+                    app:iconGravity="end"
+                    app:iconTint="@color/key_text"
+                    app:iconPadding="2dp" />
                 <Button android:id="@+id/btn2" style="@style/T9Key" android:layout_marginStart="2dp" android:layout_marginEnd="2dp" android:text="1·2\nABC" />
                 <Button android:id="@+id/btn3" style="@style/T9Key" android:layout_marginStart="4dp" android:text="3\nDEF" />
             </TableRow>

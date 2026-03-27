@@ -32,6 +32,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".OptionsActivity"
+            android:exported="false"
+            android:label="@string/options_title"
+            android:theme="@style/Theme.T9Launcher"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
     </application>
 
 </manifest>
