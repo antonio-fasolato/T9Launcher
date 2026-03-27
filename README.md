@@ -119,9 +119,13 @@ app/src/main/java/fasolato/click/t9launcher/
 
 ## Installation (Sideloading)
 
-T9 Launcher is not currently available on the Play Store. You can install it by building locally and sideloading.
+T9 Launcher is not currently available on the Play Store. You can install it by downloading a pre-built APK from GitHub Releases or by building locally.
 
-### Step 1 — Build the APK
+### Option A — Download from GitHub Releases (recommended)
+
+Download the latest signed APK directly from the [latest release](https://github.com/antonio-fasolato/T9Launcher/releases/latest) page, then follow Step 2 below to install it on your device.
+
+### Option B — Build locally
 
 ```bash
 ./gradlew assembleDebug
