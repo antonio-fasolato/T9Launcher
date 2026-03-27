@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/flBackground"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <LinearLayout
+        android:id="@+id/llCard"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:orientation="vertical"
+        android:background="@drawable/bg_launcher_card"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp">
+
+        <!-- No results label -->
+        <TextView
+            android:id="@+id/tvNoResults"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_results"
+            android:textColor="@color/hint_text"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginBottom="4dp"
+            android:visibility="gone" />
+
+        <!-- App icons pager -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/rvApps"
+            android:layout_width="match_parent"
+            android:layout_height="88dp"
+            android:layout_marginBottom="4dp" />
+
+        <LinearLayout
+            android:id="@+id/llPageDots"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+
+        <!-- T9 Keyboard -->
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*">
+
+            <TableRow android:layout_marginBottom="4dp">
+                <Button android:id="@+id/btnClear" style="@style/T9Key" android:layout_marginEnd="4dp" android:text="@string/btn_clear" android:backgroundTint="@color/clear_key_background"
+                    app:icon="@drawable/ic_gear"
+                    app:iconSize="10dp"
+                    app:iconGravity="end"
+                    app:iconTint="@color/key_text"
+                    app:iconPadding="2dp" />
+                <Button android:id="@+id/btn2" style="@style/T9Key" android:layout_marginStart="2dp" android:layout_marginEnd="2dp" android:text="1·2\nABC" />
+                <Button android:id="@+id/btn3" style="@style/T9Key" android:layout_marginStart="4dp" android:text="3\nDEF" />
+            </TableRow>
+
+            <TableRow android:layout_marginBottom="4dp">
+                <Button android:id="@+id/btn4" style="@style/T9Key" android:layout_marginEnd="4dp" android:text="4\nGHI" />
+                <Button android:id="@+id/btn5" style="@style/T9Key" android:layout_marginStart="2dp" android:layout_marginEnd="2dp" android:text="5\nJKL" />
+                <Button android:id="@+id/btn6" style="@style/T9Key" android:layout_marginStart="4dp" android:text="6\nMNO" />
+            </TableRow>
+
+            <TableRow>
+                <Button android:id="@+id/btn7" style="@style/T9Key" android:layout_marginEnd="4dp" android:text="7\nPQRS" />
+                <Button android:id="@+id/btn8" style="@style/T9Key" android:layout_marginStart="2dp" android:layout_marginEnd="2dp" android:text="8\nTUV" />
+                <Button android:id="@+id/btn9" style="@style/T9Key" android:layout_marginStart="4dp" android:text="9·0\nWXYZ" />
+            </TableRow>
+
+        </TableLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

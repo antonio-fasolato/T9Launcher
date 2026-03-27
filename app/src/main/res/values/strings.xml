@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">T9 Launcher</string>
+    <string name="no_results">No applications found</string>
+    <string name="btn_clear">C\n⌫</string>
+    <string name="menu_app_info">App info</string>
+    <string name="menu_uninstall">Uninstall</string>
+    <string name="error_launch_app">Cannot launch %s</string>
+    <string name="options_title">Options</string>
+    <string name="option_show_recently_installed">Show last installed app</string>
+    <string name="option_recently_installed_minutes">Minutes</string>
+    <string name="option_show_recently_launched">Show recently launched apps</string>
+    <string name="option_search_in_description">Search in app description</string>
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Canvas: 108x108. Adaptive icon safe zone: circle r=33 centered at (54,54).
+    Design is intentionally oversized so the circular clip shapes the icon naturally.
+    T center: x=33  |  9 circle center: (76,44), tail to y=92
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Letter T (heavy/black weight) -->
+    <!-- Top bar: x=14-52, y=22-36 (38dp wide, 14dp tall) -->
+    <path
+        android:fillColor="#1E40AF"
+        android:pathData="M14,22 h38 v14 h-38 z" />
+    <!-- Stem: centered at x=33, width=14dp, y=36-92 -->
+    <path
+        android:fillColor="#1E40AF"
+        android:pathData="M26,36 h14 v56 h-14 z" />
+
+    <!-- Digit 9 (heavy weight) -->
+    <!-- Ring: outer circle cx=76 cy=44 r=16, inner hole r=7 (ring thickness=9dp) -->
+    <path
+        android:fillColor="#7C3AED"
+        android:fillType="evenOdd"
+        android:pathData="M76,28 A16,16 0 1,0 76,60 A16,16 0 1,0 76,28 Z
+                          M76,37 A7,7 0 1,0 76,51 A7,7 0 1,0 76,37 Z" />
+    <!-- Tail: x=84-92, y=44-92 (same weight as ring) -->
+    <path
+        android:fillColor="#7C3AED"
+        android:pathData="M84,44 h8 v48 h-8 z" />
+
+</vector>
