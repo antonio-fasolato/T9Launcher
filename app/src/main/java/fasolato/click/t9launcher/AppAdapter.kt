@@ -16,7 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 data class AppInfo(
     val name: String,
     val packageName: String,
-    val icon: Drawable? = null
+    val icon: Drawable? = null,
+    val description: String = ""
 )
 
 class AppAdapter(

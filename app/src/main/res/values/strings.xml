@@ -9,4 +9,5 @@
     <string name="option_show_recently_installed">Show last installed app</string>
     <string name="option_recently_installed_minutes">Minutes</string>
     <string name="option_show_recently_launched">Show recently launched apps</string>
+    <string name="option_search_in_description">Search in app description</string>
 </resources>

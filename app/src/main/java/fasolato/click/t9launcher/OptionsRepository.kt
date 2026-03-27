@@ -16,4 +16,8 @@ class OptionsRepository(context: Context) {
     var showRecentlyLaunched: Boolean
         get() = prefs.getBoolean("show_recently_launched", true)
         set(value) { prefs.edit().putBoolean("show_recently_launched", value).apply() }
+
+    var searchInDescription: Boolean
+        get() = prefs.getBoolean("search_in_description", true)
+        set(value) { prefs.edit().putBoolean("search_in_description", value).apply() }
 }

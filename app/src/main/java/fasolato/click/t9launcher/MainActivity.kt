@@ -199,7 +199,8 @@ class MainActivity : AppCompatActivity() {
                 val priorityApps = priorityPackages.mapNotNull { pkg ->
                     try {
                         val info = pm.getApplicationInfo(pkg, 0)
-                        AppInfo(name = pm.getApplicationLabel(info).toString(), packageName = pkg)
+                        val desc = try { info.loadDescription(pm)?.toString() ?: "" } catch (e: Exception) { "" }
+                        AppInfo(name = pm.getApplicationLabel(info).toString(), packageName = pkg, description = desc)
                     } catch (e: Exception) { null }
                 }
                 runOnUiThread {
@@ -220,9 +221,11 @@ class MainActivity : AppCompatActivity() {
             val loaded = pm.queryIntentActivities(intent, 0)
                 .filter { it.activityInfo.packageName != packageName }
                 .map { ri ->
+                    val desc = try { ri.activityInfo.applicationInfo.loadDescription(pm)?.toString() ?: "" } catch (e: Exception) { "" }
                     AppInfo(
                         name = ri.loadLabel(pm).toString(),
-                        packageName = ri.activityInfo.packageName
+                        packageName = ri.activityInfo.packageName,
+                        description = desc
                     )
                 }
                 .sortedBy { it.name.lowercase() }
@@ -261,19 +264,21 @@ class MainActivity : AppCompatActivity() {
             rvApps.setCurrentItem(0, false)
             updateDots(appPageAdapter.getPageCount(), 0)
         } else {
-            val filtered = allApps.filter { matchesT9(it.name, digits) }
+            val counts = launchTracker.getAllLaunchCounts()
+            val sortComparator = compareByDescending<AppInfo> { counts[it.packageName] ?: 0 }
+                .thenBy { it.name.lowercase() }
+            val nameMatches = allApps.filter { matchesT9(it.name, digits) }.sortedWith(sortComparator)
+            val descOnlyMatches = if (options.searchInDescription) {
+                allApps.filter { !matchesT9(it.name, digits) && matchesT9Description(it, digits) }.sortedWith(sortComparator)
+            } else emptyList()
+            val filtered = nameMatches + descOnlyMatches
             if (filtered.isEmpty()) {
                 tvNoResults.visibility = View.VISIBLE
                 appPageAdapter.updateApps(emptyList(), digits)
                 updateDots(0, 0)
             } else {
                 tvNoResults.visibility = View.GONE
-                val counts = launchTracker.getAllLaunchCounts()
-                val sorted = filtered.sortedWith(
-                    compareByDescending<AppInfo> { counts[it.packageName] ?: 0 }
-                        .thenBy { it.name.lowercase() }
-                )
-                appPageAdapter.updateApps(sorted, digits)
+                appPageAdapter.updateApps(filtered, digits)
                 rvApps.setCurrentItem(0, false)
                 updateDots(appPageAdapter.getPageCount(), 0)
             }
@@ -282,6 +287,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun matchesT9(name: String, digits: String): Boolean {
         val words = name.lowercase().split(Regex("[\\s\\-_.]+"))
+        return words.any { wordMatchesT9(it, digits) }
+    }
+
+    private fun matchesT9Description(app: AppInfo, digits: String): Boolean {
+        if (app.description.isEmpty()) return false
+        val words = app.description.lowercase().split(Regex("[\\s\\-_.]+"))
         return words.any { wordMatchesT9(it, digits) }
     }
 
