@@ -11,3 +11,6 @@ local.properties
 ###
 .claude/
 .idea/
+
+keystore.properties
+t9launcher.jks

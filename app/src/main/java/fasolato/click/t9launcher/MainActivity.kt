@@ -38,6 +38,8 @@ class MainActivity : AppCompatActivity() {
     private var allApps: List<AppInfo> = emptyList()
     private var isFullListLoaded = false
     private lateinit var launchTracker: LaunchTracker
+    private lateinit var options: OptionsRepository
+    private var launchingOptions = false
 
     private lateinit var appPageAdapter: AppPageAdapter
     private lateinit var rvApps: ViewPager2
@@ -72,6 +74,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         launchTracker = LaunchTracker(this)
+        options = OptionsRepository(this)
         rvApps = findViewById(R.id.rvApps)
         llPageDots = findViewById(R.id.llPageDots)
         tvNoResults = findViewById(R.id.tvNoResults)
@@ -98,9 +101,19 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(packageReceiver, filter)
     }
 
+    override fun onStart() {
+        super.onStart()
+        launchingOptions = false
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isFullListLoaded) updateSearch()
+    }
+
     override fun onStop() {
         super.onStop()
-        finishAndRemoveTask()
+        if (!launchingOptions) finishAndRemoveTask()
     }
 
     override fun onDestroy() {
@@ -157,9 +170,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<Button>(R.id.btnClear).setOnClickListener {
+        val btnClear = findViewById<Button>(R.id.btnClear)
+        btnClear.setOnClickListener {
             currentDigits.clear()
             updateSearch()
+        }
+        btnClear.setOnLongClickListener {
+            launchingOptions = true
+            startActivity(Intent(this, OptionsActivity::class.java))
+            true
         }
     }
 
@@ -168,7 +187,9 @@ class MainActivity : AppCompatActivity() {
 
         // Lettura LaunchTracker: solo SharedPreferences, ~1ms, ok su main thread
         val lastLaunched = launchTracker.getLastLaunchTimestamps()
-        val recentlyInstalled = launchTracker.getRecentlyInstalledApp(10 * 60 * 1000)
+        val recentlyInstalled = if (options.showRecentlyInstalled)
+            launchTracker.getRecentlyInstalledApp(options.recentlyInstalledMinutes * 60 * 1000L)
+        else null
         val priorityPackages = (lastLaunched.keys + listOfNotNull(recentlyInstalled)).toSet()
 
         // Thread A: risolve nomi solo per i package noti (query mirate, molto più veloci)
@@ -218,11 +239,13 @@ class MainActivity : AppCompatActivity() {
         val digits = currentDigits.toString()
 
         if (digits.isEmpty()) {
-            val lastLaunched = launchTracker.getLastLaunchTimestamps()
+            val lastLaunched = if (options.showRecentlyLaunched) launchTracker.getLastLaunchTimestamps() else emptyMap()
             val sorted = allApps
                 .filter { lastLaunched.containsKey(it.packageName) }
                 .sortedByDescending { lastLaunched[it.packageName] }
-            val recentlyInstalled = launchTracker.getRecentlyInstalledApp(10 * 60 * 1000)
+            val recentlyInstalled = if (options.showRecentlyInstalled)
+                launchTracker.getRecentlyInstalledApp(options.recentlyInstalledMinutes * 60 * 1000L)
+            else null
             val prioritized = if (recentlyInstalled != null) {
                 val recentApp = allApps.find { it.packageName == recentlyInstalled }
                 if (recentApp != null) listOf(recentApp) + sorted.filter { it.packageName != recentlyInstalled }
