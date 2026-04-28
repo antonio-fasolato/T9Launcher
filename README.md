@@ -127,15 +127,21 @@ app/src/main/java/fasolato/click/t9launcher/
 └── SkeletonAdapter.kt      # Placeholder shown while app list loads
 ```
 
-## Installation (Sideloading)
+## Installation
 
-T9 Launcher is not currently available on the Play Store. You can install it by downloading a pre-built APK from GitHub Releases or by building locally.
+T9 Launcher is not yet on the Play Store. Pick one of the options below.
 
-### Option A — Download from GitHub Releases (recommended)
+> **Note on signatures.** The GitHub Releases APK is signed with the developer's keystore; the upcoming F-Droid build will be signed by F-Droid. The two signatures differ, so you cannot upgrade from one source to the other in place — pick a source and stick with it (or uninstall and reinstall to switch).
+
+### Option A — F-Droid (planned)
+
+Submission to F-Droid is in progress. Once published, the app will be installable from any F-Droid-compatible client (F-Droid, Droid-ify, Neo Store, etc.) by searching for "T9 Launcher". See [FDROID.md](FDROID.md) for the submission process.
+
+### Option B — Download from GitHub Releases
 
 Download the latest signed APK directly from the [latest release](https://github.com/antonio-fasolato/T9Launcher/releases/latest) page, then follow Step 2 below to install it on your device.
 
-### Option B — Build locally
+### Option C — Build locally
 
 ```bash
 ./gradlew assembleDebug

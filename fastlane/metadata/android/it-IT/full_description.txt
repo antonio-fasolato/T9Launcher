@@ -1,0 +1,25 @@
+T9 Launcher è un launcher Android rapido e guidato dalla tastiera che usa l'input in stile T9 per cercare e avviare le app in pochi secondi.
+
+Aperto da una scorciatoia sulla home, il launcher appare come una card semi-trasparente posizionata vicino al punto di tap. Invece di scorrere il drawer delle app o digitare su una tastiera completa, cerchi usando il tastierino numerico — proprio come il T9 dei vecchi cellulari. Ogni tasto (2–9) è mappato a un insieme di lettere, e il launcher filtra le app installate in tempo reale a ogni cifra premuta.
+
+La ricerca è un match substring sul nome dell'app che ignora gli spazi e gli altri delimitatori (-, _, .), permettendo alla sequenza di cifre di attraversarli. Esempi:
+- 9 4 2 trova "WhatsApp"
+- 9 7 trova "Play Store" (attraversa lo spazio)
+- 3 3 7 trova "F-Droid" (attraversa il trattino)
+
+I caratteri matchanti vengono evidenziati (sfondo giallo, grassetto). Le app sono ordinate per frequenza di utilizzo negli ultimi 10 giorni, poi alfabeticamente, così le app più usate vengono prima.
+
+Funzionalità:
+- Tastierino numerico 3×3 (2–9) più tasto Cancella
+- Pressione lunga su Cancella per aprire le Impostazioni
+- Pressione lunga su un'app per Info app o Disinstalla
+- Opzionale: evidenzia app lanciate / installate di recente
+- Opzionale: estende la ricerca anche alle descrizioni delle app
+
+Privacy:
+- Nessun permesso internet, nessuna analitica, nessuna telemetria
+- Cronologia di lancio e preferenze restano sul dispositivo (SharedPreferences)
+- Nessun dato lascia il telefono
+
+Richiede Android 13 (API 33) o superiore.
+Disponibile in inglese e italiano.

@@ -1,0 +1,25 @@
+T9 Launcher is a fast, keyboard-driven app launcher for Android that uses T9-style input to search and launch your apps in seconds.
+
+Triggered by a home-screen shortcut, the launcher appears as a translucent overlay card anchored near your tap position. Instead of scrolling app drawers or typing on a full keyboard, you search using the numeric keypad — just like T9 predictive text. Each number key (2–9) maps to a set of letters, and the launcher filters your installed apps in real time as you press digits.
+
+The match is a substring search over the app name that ignores spaces and other delimiters (-, _, .), so a digit sequence can span across them. Examples:
+- 9 4 2 matches "WhatsApp"
+- 9 7 matches "Play Store" (across the space)
+- 3 3 7 matches "F-Droid" (across the dash)
+
+Matched characters are highlighted (yellow background, bold). Apps are sorted by launch frequency over the last 10 days, then alphabetically, so your most-used apps surface first.
+
+Features:
+- 3×3 numeric keypad (2–9) plus Clear
+- Long-press Clear to open Settings
+- Long-press an app to access App Info or Uninstall
+- Optional: highlight recently launched / recently installed apps
+- Optional: extend search to app descriptions
+
+Privacy:
+- No internet permission, no analytics, no telemetry
+- All launch history and preferences are stored locally in SharedPreferences
+- No data leaves your device
+
+Requires Android 13 (API 33) or higher.
+Available in English and Italian.
