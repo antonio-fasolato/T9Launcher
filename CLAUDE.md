@@ -47,7 +47,9 @@ Single-activity app with no fragments. All logic lives in `app/src/main/java/fas
 
 **`AppAdapter.kt`** — RecyclerView adapter for the app list. Handles:
 - Sorting: by launch count descending (last 10 days), then name ascending
-- T9 match highlighting: yellow background + bold on matched characters in the app name
+- T9 match highlighting: yellow background + bold on matched characters (delegates to `T9Matcher.matchPositions` for indices)
+
+**`T9Matcher.kt`** — Single source of truth for the T9 matching algorithm. Substring search over the lowercased name (or description), with delimiter characters transparent. See "T9 Matching Logic" below.
 
 **`LaunchTracker.kt`** — Persists launch timestamps in SharedPreferences as JSON. Counts launches in the last 10 days; prunes old entries on each write.
 
@@ -65,7 +67,22 @@ Single-activity app with no fragments. All logic lives in `app/src/main/java/fas
 
 ## T9 Matching Logic
 
-App names are split by delimiters (space, dash, underscore, dot). T9 digits are matched against the first characters of each word segment. The match is prefix-based per segment.
+The algorithm lives in `T9Matcher.kt` (object). It performs a **contiguous substring search** over the lowercased name (or description), treating delimiter characters (whitespace, dash, underscore, dot) as transparent — they are skipped during comparison but their positions are preserved so the highlighter can leave them unstyled.
+
+`T9_MAP` defines the digit→letters mapping (2→abc, 3→def, 4→ghi, 5→jkl, 6→mno, 7→pqrs, 8→tuv, 9→wxyz). A character also matches its literal digit (e.g. the char `3` in a name matches digit `3`), so "365 Days" + `365` matches.
+
+`matchPositions(text, digits): List<Int>?` returns the absolute indices in `text` of the leftmost contiguous match (delimiters skipped), or `null` if there's no match. Empty digits return an empty list (match everything). Examples:
+
+| Name | Digits | Matched chars | Indices |
+|------|--------|---------------|---------|
+| `WhatsApp` | `942` | `Wha` | `[0, 1, 2]` |
+| `WhatsApp` | `428` | `hat` (mid-word) | `[1, 2, 3]` |
+| `F-Droid` | `376` | `Dro` | `[2, 3, 4]` |
+| `F-Droid` | `337` | `F` + `Dr` (across dash) | `[0, 2, 3]` |
+| `Play Store` | `97` | `y` + `S` (across space) | `[3, 5]` |
+| `Google Maps` | `62` | `Ma` | `[7, 8]` |
+
+`matchesName` / `matchesDescription` are boolean wrappers around `matchPositions` (with a guard returning false for empty descriptions). `AppAdapter` / `AppPageAdapter` apply per-character `BackgroundColorSpan` + bold on each returned index.
 
 ## UI / Theming
 

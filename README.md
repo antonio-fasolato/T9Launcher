@@ -36,9 +36,18 @@ The card displays a 3×3 numeric keyboard (keys 2–9) with standard T9 letter m
 | 8   | T U V   |
 | 9   | W X Y Z |
 
-As you press digits, the app list filters to show only matching apps. The match works on the **first letter of each word** in an app name: for example, pressing `9 2` would match "WhatsApp" (W→9, A→2).
+As you press digits, the app list filters to show only matching apps. The match is a **substring search** over the app name that ignores spaces and other delimiters (`-`, `_`, `.`) — so a digit sequence can match characters that span across them.
 
-Matched characters are highlighted in the app name (yellow background, bold text).
+Examples:
+
+- `9 4 2` matches "**Wha**tsApp" (W→9, h→4, a→2)
+- `4 2 8` matches "W**hat**sApp" (h→4, a→2, t→8) — substring inside a word
+- `9 7` matches "Pla**y S**tore" (y→9, S→7) — across a space
+- `3 3 7` matches "**F**-**Dr**oid" (F→3, D→3, r→7) — across a dash
+
+A digit also matches its literal character, so `3 6 5` matches "**365** Days".
+
+The matching characters are highlighted in the app name (yellow background, bold text). Delimiter characters between matched characters stay unhighlighted.
 
 ### Browsing results
 
@@ -111,6 +120,7 @@ Accessible via long-press on the Clear button. Options include:
 app/src/main/java/fasolato/click/t9launcher/
 ├── MainActivity.kt         # Overlay UI, T9 input, app loading and filtering
 ├── AppPageAdapter.kt       # ViewPager2 adapter (3 apps per page, match highlighting)
+├── T9Matcher.kt            # T9 substring matching + highlight indices
 ├── LaunchTracker.kt        # Persists launch history (10-day window, SharedPreferences)
 ├── OptionsActivity.kt      # Settings screen
 ├── OptionsRepository.kt    # User preferences management

@@ -91,11 +91,26 @@ Comportamenti:
 
 ### 5.3 Algoritmo di matching T9
 
-- Il nome dell'app viene splittato per delimitatori `[\s\-_.]+` in parole.
-- Per ogni parola: la query matcha se per ogni `i ∈ [0, digits.length)`, `word[i]` appartiene al set di lettere mappate da `digits[i]` (oppure è esattamente quel digit, in `MainActivity.wordMatchesT9`).
-- Una app matcha se **almeno una** delle sue parole matcha la query.
-- Esempio: query `9 2` → matcha "WhatsApp" perché `W → 9` e `h → 4`? No: la verifica è posizionale sulla parola, quindi `W (9) h (4)` non matcha `9 2`. Matcha invece "Wallet App" perché `W (9) a (2)` matcha `9 2`. (NB: l'esempio del README "92 → WhatsApp" è quindi parzialmente impreciso; il match avviene sulle prime N lettere di una singola parola, non su iniziali di più parole.)
-- L'esito viene **evidenziato** nel nome: i primi `digits.length` caratteri della parola vincente ottengono background giallo (`#FFEB3B` in `AppAdapter`, `#A78BFA` viola in `AppPageAdapter`) + grassetto.
+Implementato in `T9Matcher.kt` (object Kotlin). È una **ricerca substring contigua** sulla versione lowercased del nome (o descrizione) con i caratteri delimitatori trasparenti.
+
+- `T9_MAP`: mapping digit→lettere (2→abc, 3→def, 4→ghi, 5→jkl, 6→mno, 7→pqrs, 8→tuv, 9→wxyz).
+- I delimitatori (`whitespace`, `-`, `_`, `.`) vengono **saltati** durante il confronto ma i loro indici restano nell'output, così l'highlighting non li evidenzia.
+- Un carattere matcha un digit se appartiene al suo set di lettere **oppure** se è il digit letterale stesso (così "365 Days" + `365` matcha direttamente sui caratteri `3`,`6`,`5`).
+- `matchPositions(text, digits): List<Int>?` ritorna gli indici assoluti del primo match contiguo (scansione left-to-right) sui char non-delim, oppure `null` se non c'è match. Digits vuoti ritornano lista vuota (matcha tutto).
+- `matchesName` / `matchesDescription` sono wrapper boolean su `matchPositions` (con guard per descrizione vuota → `false`).
+
+Esempi:
+
+| Nome | Digits | Char matchanti | Indici |
+|------|--------|----------------|--------|
+| `WhatsApp` | `942` | `Wha` | `[0, 1, 2]` |
+| `WhatsApp` | `428` | `hat` (substring interno) | `[1, 2, 3]` |
+| `F-Droid` | `376` | `Dro` | `[2, 3, 4]` |
+| `F-Droid` | `337` | `F` + `Dr` (cross-dash) | `[0, 2, 3]` |
+| `Play Store` | `97` | `y` + `S` (cross-space) | `[3, 5]` |
+| `Google Maps` | `62` | `Ma` | `[7, 8]` |
+
+L'highlighting (`AppAdapter` giallo `#FFEB3B`, `AppPageAdapter` viola `#A78BFA`) applica `BackgroundColorSpan` + grassetto **per singolo indice** sugli output di `matchPositions`. I delimitatori tra char matchanti restano senza span.
 
 ### 5.4 Lista risultati e paginazione
 
@@ -260,9 +275,10 @@ App **single-activity** (con una `OptionsActivity` separata per le impostazioni)
 
 ```
 fasolato.click.t9launcher/
-├── MainActivity.kt           # Overlay, T9, loading, sorting, popup
-├── AppPageAdapter.kt         # ViewPager2: 3 app per pagina, highlight
+├── MainActivity.kt           # Overlay, T9 input, loading, sorting, popup
+├── AppPageAdapter.kt         # ViewPager2: 3 app per pagina, highlight per char
 ├── AppAdapter.kt             # RecyclerView semplice (legacy/alt path)
+├── T9Matcher.kt              # Algoritmo di matching T9 + indici highlight
 ├── LaunchTracker.kt          # Storage JSON delle finestre di lancio/install (SharedPrefs)
 ├── OptionsActivity.kt        # Schermata Settings
 ├── OptionsRepository.kt      # Wrapper SharedPrefs per opzioni
