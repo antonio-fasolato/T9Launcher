@@ -97,7 +97,7 @@ Locally, credentials are in `keystore.properties` (gitignored). The keystore fil
 
 Required GitHub Secrets: `KEYSTORE_BASE64` (base64-encoded `.jks`), `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`.
 
-Uses JDK 21 (matching `gradle/gradle-daemon-jvm.properties` `toolchainVersion=21`) and AGP 9.1.0 / Gradle 9.3.1.
+Uses JDK 21 (matching `gradle/gradle-daemon-jvm.properties` `toolchainVersion=21`) and AGP 9.2.0 / Gradle 9.4.1.
 
 ## Release Guide
 

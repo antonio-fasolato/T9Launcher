@@ -238,7 +238,7 @@ UI:
 - **Min SDK:** 33 (Android 13). Vincolato da `Window.setBackgroundBlurRadius`.
 - **Target/Compile SDK:** 36.
 - **Lingua:** Kotlin.
-- **Build:** Gradle Kotlin DSL, AGP 9.1.0, Gradle 9.3.1, JDK 21.
+- **Build:** Gradle Kotlin DSL, AGP 9.2.0, Gradle 9.4.1, JDK 21.
 
 ### 7.4 Accessibilità
 
