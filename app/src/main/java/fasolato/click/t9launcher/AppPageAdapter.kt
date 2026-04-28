@@ -28,11 +28,6 @@ class AppPageAdapter(
     private val iconCache = HashMap<String, Drawable>()
     var packageManager: PackageManager? = null
 
-    private val t9Map = mapOf(
-        '2' to "abc", '3' to "def", '4' to "ghi", '5' to "jkl",
-        '6' to "mno", '7' to "pqrs", '8' to "tuv", '9' to "wxyz"
-    )
-
     fun updateApps(newApps: List<AppInfo>, digits: String = "") {
         apps = newApps
         currentDigits = digits
@@ -93,32 +88,14 @@ class AppPageAdapter(
         }
     }
 
-    private fun wordMatchesT9(word: String, digits: String): Boolean {
-        if (word.length < digits.length) return false
-        for (i in digits.indices) {
-            val digit = digits[i]
-            val letters = t9Map[digit]
-            if (letters == null || word[i] !in letters) return false
-        }
-        return true
-    }
-
     private fun buildHighlightedName(name: String, digits: String): SpannableString {
         val spannable = SpannableString(name)
         if (digits.isEmpty()) return spannable
+        val positions = T9Matcher.matchPositions(name, digits) ?: return spannable
         val highlightColor = 0xFFA78BFA.toInt()
-        val delimiter = Regex("[\\s\\-_.]+")
-        var pos = 0
-        while (pos <= name.length) {
-            val delimMatch = delimiter.find(name, pos)
-            val wordEnd = delimMatch?.range?.first ?: name.length
-            val word = name.substring(pos, wordEnd)
-            if (wordMatchesT9(word.lowercase(), digits)) {
-                spannable.setSpan(BackgroundColorSpan(highlightColor), pos, pos + digits.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                spannable.setSpan(StyleSpan(Typeface.BOLD), pos, pos + digits.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                break
-            }
-            pos = delimMatch?.range?.last?.plus(1) ?: (name.length + 1)
+        for (idx in positions) {
+            spannable.setSpan(BackgroundColorSpan(highlightColor), idx, idx + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable.setSpan(StyleSpan(Typeface.BOLD), idx, idx + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
         return spannable
     }

@@ -23,17 +23,6 @@ import androidx.viewpager2.widget.ViewPager2
 
 class MainActivity : AppCompatActivity() {
 
-    private val t9Map = mapOf(
-        '2' to "abc",
-        '3' to "def",
-        '4' to "ghi",
-        '5' to "jkl",
-        '6' to "mno",
-        '7' to "pqrs",
-        '8' to "tuv",
-        '9' to "wxyz"
-    )
-
     private val currentDigits = StringBuilder()
     private var allApps: List<AppInfo> = emptyList()
     private var isFullListLoaded = false
@@ -267,9 +256,9 @@ class MainActivity : AppCompatActivity() {
             val counts = launchTracker.getAllLaunchCounts()
             val sortComparator = compareByDescending<AppInfo> { counts[it.packageName] ?: 0 }
                 .thenBy { it.name.lowercase() }
-            val nameMatches = allApps.filter { matchesT9(it.name, digits) }.sortedWith(sortComparator)
+            val nameMatches = allApps.filter { T9Matcher.matchesName(it.name, digits) }.sortedWith(sortComparator)
             val descOnlyMatches = if (options.searchInDescription) {
-                allApps.filter { !matchesT9(it.name, digits) && matchesT9Description(it, digits) }.sortedWith(sortComparator)
+                allApps.filter { !T9Matcher.matchesName(it.name, digits) && T9Matcher.matchesDescription(it.description, digits) }.sortedWith(sortComparator)
             } else emptyList()
             val filtered = nameMatches + descOnlyMatches
             if (filtered.isEmpty()) {
@@ -283,28 +272,6 @@ class MainActivity : AppCompatActivity() {
                 updateDots(appPageAdapter.getPageCount(), 0)
             }
         }
-    }
-
-    private fun matchesT9(name: String, digits: String): Boolean {
-        val words = name.lowercase().split(Regex("[\\s\\-_.]+"))
-        return words.any { wordMatchesT9(it, digits) }
-    }
-
-    private fun matchesT9Description(app: AppInfo, digits: String): Boolean {
-        if (app.description.isEmpty()) return false
-        val words = app.description.lowercase().split(Regex("[\\s\\-_.]+"))
-        return words.any { wordMatchesT9(it, digits) }
-    }
-
-    private fun wordMatchesT9(word: String, digits: String): Boolean {
-        if (word.length < digits.length) return false
-        for (i in digits.indices) {
-            val digit = digits[i]
-            val letters = t9Map[digit]
-            val matches = (letters != null && word[i] in letters) || word[i] == digit
-            if (!matches) return false
-        }
-        return true
     }
 
     private fun showAppMenu(app: AppInfo, anchor: View) {
